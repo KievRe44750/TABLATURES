@@ -1,187 +1,149 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>pdf.min.js
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mes Tabs | Mode Pupitre</title>
+    <title>Mes Tablatures | Pro</title>
     <style>
         :root {
-            --primary: #2c3e50;
-            --accent: #3498db;
-            --star: #f1c40f;
-            --bg: #f8f9fa;
+            --primary-color: #3498db;
+            --star-color: #f1c40f;
+            --bg-color: #f4f7f6;
+            --text-dark: #2c3e50;
+            --new-color: #e67e22;
         }
 
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 10px; }
-        .container { max-width: 100%; margin: auto; background: white; padding: 15px; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg-color); padding: 20px; color: #333; }
+        .container { max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         
-        /* Optimisation Mobile Header */
-        header { border-bottom: 2px solid var(--accent); margin-bottom: 15px; padding-bottom: 10px; }
-        h1 { font-size: 1.4em; margin: 0; color: var(--primary); }
-        #fileCount { font-size: 0.8em; color: var(--accent); font-weight: bold; }
+        header { border-bottom: 3px solid var(--primary-color); margin-bottom: 25px; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: flex-end; }
+        h1 { margin: 0; font-size: 1.8em; color: var(--text-dark); }
+        #fileCount { font-weight: bold; color: var(--primary-color); font-size: 0.9em; }
 
-        .search-container { margin: 15px 0; }
-        #searchBar { 
-            width: 100%; padding: 12px; border-radius: 20px; border: 1px solid #ddd; 
-            font-size: 16px; /* Évite le zoom automatique sur iPhone */
-            box-sizing: border-box; 
-        }
+        .search-container { margin-bottom: 30px; }
+        #searchBar { width: 100%; padding: 15px 20px; font-size: 1.1em; border: 2px solid #eee; border-radius: 30px; outline: none; box-sizing: border-box; }
 
-        /* Liste en mode vertical (Stack mobile) */
         .tab-item { 
-            display: flex; flex-direction: column; /* Vertical par défaut */
-            gap: 10px; padding: 15px; border: 1px solid #eee; border-radius: 10px; margin-bottom: 10px;
+            display: grid; grid-template-columns: 1fr auto auto; align-items: center;
+            padding: 18px; border: 1px solid #eee; border-radius: 12px; margin-bottom: 15px; background: #fff; transition: 0.3s;
         }
+        .tab-item:hover { background-color: #eef7fe; border-color: var(--primary-color); transform: translateX(8px); }
 
-        .info h3 { margin: 0; font-size: 1.1em; color: var(--primary); }
+        .info h3 { margin: 0; color: var(--text-dark); font-size: 1.2em; text-transform: capitalize; display: flex; align-items: center; gap: 10px; }
+        .badge-new { background: var(--new-color); color: white; font-size: 0.6em; padding: 3px 8px; border-radius: 5px; text-transform: uppercase; }
+
+        .rating { margin-right: 25px; display: flex; flex-direction: row-reverse; }
+        .star { font-size: 1.6em; color: #ddd; cursor: pointer; }
+        .star:hover, .star:hover ~ .star, .active-star { color: var(--star-color); }
+
+        .btn-view { background: var(--primary-color); color: white; padding: 10px 20px; border-radius: 8px; font-weight: bold; text-decoration: none; }
         
-        .actions { display: flex; justify-content: space-between; align-items: center; }
-
-        .rating { display: flex; flex-direction: row-reverse; gap: 3px; }
-        .star { font-size: 1.4em; color: #ddd; }
-        .active-star { color: var(--star); }
-
-        .btn-view { 
-            background: var(--accent); color: white; padding: 8px 15px; 
-            border-radius: 6px; text-decoration: none; font-size: 0.9em; font-weight: bold;
-        }
-
-        /* MODAL MODE PUPITRE */
-        #pupitreModal {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: white; z-index: 1000; flex-direction: column;
-        }
-        #pdfFrame { width: 100%; flex-grow: 1; border: none; }
-        .pupitre-controls {
-            background: #2c3e50; color: white; padding: 10px;
-            display: flex; justify-content: space-around; align-items: center;
-        }
-        .btn-control { background: #34495e; color: white; border: none; padding: 8px 12px; border-radius: 4px; }
-        .close-pupitre { background: #e74c3c; padding: 8px 15px; border-radius: 4px; border: none; color: white; }
+        #noMatch { display: none; text-align: center; color: #999; }
+        .loader { text-align: center; color: var(--primary-color); }
     </style>
 </head>
 <body>
 
 <div class="container">
     <header>
-        <h1>🎸 Mes Tablatures</h1>
-        <div id="fileCount">...</div>
+        <div>
+            <h1>🎸 Mes Tablatures</h1>
+            <div id="fileCount">Chargement du compteur...</div>
+        </div>
     </header>
 
     <div class="search-container">
-        <input type="text" id="searchBar" placeholder="🔍 Rechercher un morceau..." onkeyup="filterTabs()">
+        <input type="text" id="searchBar" placeholder="Rechercher un morceau..." onkeyup="filterTabs()">
     </div>
 
-    <div id="tabList">Chargement...</div>
-</div>
-
-<div id="pupitreModal">
-    <div class="pupitre-controls">
-        <button class="btn-control" onclick="adjustScroll(-1)">Vitesse -</button>
-        <button id="playBtn" class="btn-control" onclick="toggleScroll()">▶ Play</button>
-        <button class="btn-control" onclick="adjustScroll(1)">Vitesse +</button>
-        <button class="close-pupitre" onclick="closePupitre()">Quitter</button>
-    </div>
-    <div id="pdfFrame" style="overflow-y: auto; flex-grow: 1; background: #333;"></div>
+    <div id="noMatch">Aucun morceau trouvé...</div>
+    <div id="tabList" class="loader">Initialisation de la bibliothèque...</div>
 </div>
 
 <script>
+    // --- CONFIGURATION ---
     const repoOwner = 'KievRe44750'; 
     const repoName = 'TABLATURES';    
     const folderPath = 'pdfs'; 
-
-    let scrollInterval;
-    let scrollSpeed = 1; // pixels par frame
+    // ---------------------
 
     async function loadFiles() {
         const url = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${folderPath}`;
+        
         try {
             const response = await fetch(url);
             const files = await response.json();
             const tabList = document.getElementById('tabList');
             tabList.innerHTML = '';
+            tabList.classList.remove('loader');
 
+            if (!Array.isArray(files)) return;
+
+            // Option 5 : Mise à jour du compteur
             const pdfFiles = files.filter(f => f.name.toLowerCase().endsWith('.pdf'));
-            document.getElementById('fileCount').innerText = `${pdfFiles.length} morceaux`;
+            document.getElementById('fileCount').innerText = `${pdfFiles.length} morceaux disponibles`;
 
+            // On trie les fichiers (les plus récents en premier si possible, ou par nom)
             pdfFiles.forEach(file => {
                 const displayName = file.name.replace('.pdf', '').replace(/-/g, ' ').replace(/_/g, ' ');
-                const savedRating = localStorage.getItem('rating-' + file.sha) || 0;
                 
+                // Option 6 : Détection de nouveauté (Simulée ici, car l'API content ne donne pas la date exacte sans appel extra)
+                // Pour l'exemple, on peut considérer un fichier "nouveau" s'il contient "NEW" dans le nom ou via un tag
+                const isNew = false; // On pourrait l'automatiser avec un autre appel API si besoin
+
                 const item = document.createElement('div');
                 item.className = 'tab-item';
                 item.setAttribute('data-title', displayName.toLowerCase());
                 
+                // Option 7 : Récupération de la note sauvegardée
+                const savedRating = localStorage.getItem('rating-' + file.sha) || 0;
+
                 item.innerHTML = `
                     <div class="info">
-                        <h3>${displayName}</h3>
+                        <h3>${displayName} ${isNew ? '<span class="badge-new">Nouveau</span>' : ''}</h3>
+                        <span>Fichier : ${file.name}</span>
                     </div>
-                    <div class="actions">
-                        <div class="rating" data-sha="${file.sha}">
-                            ${[5,4,3,2,1].map(num => `<span class="star ${num <= savedRating ? 'active-star' : ''}" onclick="setRating(this, ${num})">★</span>`).join('')}
-                        </div>
-                        <button class="btn-view" onclick="openPupitre('https://${repoOwner}.github.io/${repoName}/${file.path}')">Pupitre 📖</button>
+                    <div class="rating" data-sha="${file.sha}">
+                        ${[5,4,3,2,1].map(num => `
+                            <span class="star ${num <= savedRating ? 'active-star' : ''}" 
+                                  onclick="setRating(this, ${num})">★</span>
+                        `).join('')}
                     </div>
+                    <a href="https://${repoOwner}.github.io/${repoName}/${file.path}" target="_blank" class="btn-view">Ouvrir</a>
                 `;
                 tabList.appendChild(item);
             });
-        } catch (e) { tabList.innerHTML = "Erreur de chargement."; }
-    }
-
-    // --- LOGIQUE PUPITRE ---
-    function openPupitre(url) {
-        document.getElementById('pdfFrame').src = url;
-        document.getElementById('pupitreModal').style.display = 'flex';
-        document.body.style.overflow = 'hidden'; // Bloque le scroll derrière
-    }
-
-    function closePupitre() {
-        stopScroll();
-        document.getElementById('pupitreModal').style.display = 'none';
-        document.body.style.overflow = 'auto';
-    }
-
-    function toggleScroll() {
-        if (scrollInterval) {
-            stopScroll();
-        } else {
-            startScroll();
+        } catch (error) {
+            document.getElementById('tabList').innerHTML = "Erreur GitHub.";
         }
     }
 
-    function startScroll() {
-        document.getElementById('playBtn').innerText = "⏸ Pause";
-        scrollInterval = setInterval(() => {
-            const frame = document.getElementById('pdfFrame');
-            frame.contentWindow.scrollBy(0, scrollSpeed);
-        }, 50);
-    }
-
-    function stopScroll() {
-        clearInterval(scrollInterval);
-        scrollInterval = null;
-        document.getElementById('playBtn').innerText = "▶ Play";
-    }
-
-    function adjustScroll(delta) {
-        scrollSpeed = Math.max(0.5, scrollSpeed + delta);
-    }
-
-    // Fonctions Stars et Recherche (identiques précédemment)
-    function setRating(el, r) {
-        const sha = el.parentElement.dataset.sha;
-        localStorage.setItem('rating-' + sha, r);
-        loadFiles(); // Rafraîchit visuellement
+    // Option 7 : Sauvegarde locale de la note
+    function setRating(element, rating) {
+        const parent = element.parentElement;
+        const sha = parent.dataset.sha;
+        const stars = Array.from(parent.querySelectorAll('.star')).reverse();
+        
+        stars.forEach(s => s.classList.remove('active-star'));
+        for(let i=0; i < rating; i++) stars[i].classList.add('active-star');
+        
+        localStorage.setItem('rating-' + sha, rating);
     }
 
     function filterTabs() {
         const input = document.getElementById('searchBar').value.toLowerCase();
         const items = document.getElementsByClassName('tab-item');
-        for (let it of items) it.style.display = it.getAttribute('data-title').includes(input) ? "flex" : "none";
+        let hasResults = false;
+        for (let item of items) {
+            const show = item.getAttribute('data-title').includes(input);
+            item.style.display = show ? "grid" : "none";
+            if(show) hasResults = true;
+        }
+        document.getElementById('noMatch').style.display = hasResults ? "none" : "block";
     }
 
     loadFiles();
 </script>
+
 </body>
 </html>
-
