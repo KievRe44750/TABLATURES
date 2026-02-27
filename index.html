@@ -3,133 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mes Tablatures | Portfolio</title>
+    <title>Mes Tablatures | Recherche & Notes</title>
     <style>
         :root {
             --primary-color: #3498db;
             --star-color: #f1c40f;
-            --bg-color: #f8f9fa;
+            --bg-color: #f4f7f6;
+            --success-green: #2ecc71;
         }
 
-        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg-color); padding: 20px; color: #333; }
-        .container { max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); padding: 20px; color: #333; }
+        .container { max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         
-        h1 { border-bottom: 3px solid var(--primary-color); padding-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        header { border-bottom: 3px solid var(--primary-color); margin-bottom: 25px; padding-bottom: 10px; }
+        h1 { margin: 0; display: flex; align-items: center; gap: 10px; }
+
+        /* Style de la barre de recherche */
+        .search-container { margin-bottom: 30px; position: relative; }
+        #searchBar {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 1.1em;
+            border: 2px solid #eee;
+            border-radius: 30px;
+            outline: none;
+            transition: border-color 0.3s;
+            box-sizing: border-box;
+        }
+        #searchBar:focus { border-color: var(--primary-color); }
+
+        .tab-list { display: flex; flex-direction: column; gap: 15px; }
         
-        .tab-list { margin-top: 30px; }
-        
-        /* Style des lignes de tablatures */
+        /* Style des items (inspiré de vos formulaires d'audit) */
         .tab-item { 
             display: grid;
             grid-template-columns: 1fr auto auto;
             align-items: center;
-            padding: 20px;
-            margin-bottom: 15px;
+            padding: 18px;
             border: 1px solid #eee;
-            border-radius: 10px;
+            border-radius: 12px;
             transition: all 0.3s ease;
             text-decoration: none;
             color: inherit;
         }
 
         .tab-item:hover { 
-            background-color: #e3f2fd; /* Bleu clair au survol comme vos formulaires */
+            background-color: #eef7fe; 
             border-color: var(--primary-color);
-            transform: translateY(-2px);
+            transform: translateX(8px);
         }
 
-        .info h3 { margin: 0; color: #2c3e50; }
-        .info span { font-size: 0.85em; color: #7f8c8d; }
+        .info h3 { margin: 0; color: #2c3e50; font-size: 1.2em; }
+        .info span { font-size: 0.9em; color: #7f8c8d; }
 
-        /* Système de notation étoilé */
-        .rating {
-            margin-right: 20px;
-            display: flex;
-            flex-direction: row-reverse; /* Pour la logique de sélection inverse en CSS */
-            gap: 2px;
-        }
-
-        .star {
-            font-size: 1.5em;
-            color: #ddd;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-
-        /* Effet au survol et sélection */
+        /* Notation étoilée */
+        .rating { margin-right: 25px; display: flex; flex-direction: row-reverse; }
+        .star { font-size: 1.6em; color: #ddd; cursor: pointer; transition: color 0.2s; }
         .star:hover, .star:hover ~ .star { color: var(--star-color); }
         .active-star { color: var(--star-color) !important; }
 
         .btn-view {
             background: var(--primary-color);
             color: white;
-            padding: 10px 20px;
+            padding: 10px 18px;
             border-radius: 8px;
             font-weight: bold;
+            text-decoration: none;
+            text-align: center;
+            min-width: 100px;
         }
+        .btn-view:hover { background: #2980b9; }
+
+        /* Message si rien n'est trouvé */
+        #noMatch { display: none; text-align: center; padding: 20px; color: #999; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>🎸 Ma Bibliothèque de Tablatures</h1>
-    <p>Sélectionnez un morceau pour voir le PDF et notez sa difficulté ou votre maîtrise :</p>
+    <header>
+        <h1>🎸 Mes Tablatures Perso</h1>
+    </header>
 
-    <div class="tab-list">
+    <div class="search-container">
+        <input type="text" id="searchBar" placeholder="Rechercher un artiste ou un morceau..." onkeyup="filterTabs()">
+    </div>
+
+    <div id="noMatch">Aucun résultat trouvé pour cette recherche.</div>
+
+    <div class="tab-list" id="tabList">
         
-        <div class="tab-item">
+        <div class="tab-item" data-title="Stairway to Heaven Led Zeppelin">
             <div class="info">
-                <h3>Stairway to Heaven - Led Zeppelin</h3>
-                <span>Fichier : stairway_heaven.pdf</span>
+                <h3>Stairway to Heaven</h3>
+                <span>Led Zeppelin</span>
             </div>
-            
-            <div class="rating" data-id="tab1">
+            <div class="rating">
                 <span class="star" onclick="setRating(this, 5)">★</span>
                 <span class="star" onclick="setRating(this, 4)">★</span>
                 <span class="star" onclick="setRating(this, 3)">★</span>
                 <span class="star" onclick="setRating(this, 2)">★</span>
                 <span class="star" onclick="setRating(this, 1)">★</span>
             </div>
-
-            <a href="pdfs/stairway_heaven.pdf" target="_blank" class="btn-view">Ouvrir PDF</a>
+            <a href="pdfs/stairway_heaven.pdf" target="_blank" class="btn-view">Voir PDF</a>
         </div>
 
-        <div class="tab-item">
+        <div class="tab-item" data-title="Nothing Else Matters Metallica">
             <div class="info">
-                <h3>Nothing Else Matters - Metallica</h3>
-                <span>Fichier : metallica_nothing.pdf</span>
+                <h3>Nothing Else Matters</h3>
+                <span>Metallica</span>
             </div>
-            
-            <div class="rating" data-id="tab2">
+            <div class="rating">
                 <span class="star" onclick="setRating(this, 5)">★</span>
                 <span class="star" onclick="setRating(this, 4)">★</span>
                 <span class="star" onclick="setRating(this, 3)">★</span>
                 <span class="star" onclick="setRating(this, 2)">★</span>
                 <span class="star" onclick="setRating(this, 1)">★</span>
             </div>
-
-            <a href="pdfs/metallica_nothing.pdf" target="_blank" class="btn-view">Ouvrir PDF</a>
+            <a href="pdfs/metallica_nothing.pdf" target="_blank" class="btn-view">Voir PDF</a>
         </div>
 
     </div>
 </div>
 
 <script>
+    // Fonction pour la notation étoilée
     function setRating(element, rating) {
         const parent = element.parentElement;
-        const stars = parent.querySelectorAll('.star');
-        
-        // On retire la classe active de toutes les étoiles du bloc
+        const stars = Array.from(parent.querySelectorAll('.star')).reverse();
         stars.forEach(s => s.classList.remove('active-star'));
-        
-        // On ajoute la classe active à l'étoile cliquée et à toutes celles qui précèdent (visuellement à gauche)
-        // Note : comme on utilise flex-direction: row-reverse, la logique est inversée
-        const starsArray = Array.from(stars).reverse();
         for(let i=0; i < rating; i++) {
-            starsArray[i].classList.add('active-star');
+            stars[i].classList.add('active-star');
         }
-        
-        console.log("Note enregistrée pour " + parent.dataset.id + " : " + rating + "/5");
+    }
+
+    // Fonction de filtrage pour la recherche
+    function filterTabs() {
+        const input = document.getElementById('searchBar').value.toLowerCase();
+        const items = document.getElementsByClassName('tab-item');
+        const noMatch = document.getElementById('noMatch');
+        let hasResults = false;
+
+        for (let i = 0; i < items.length; i++) {
+            const title = items[i].getAttribute('data-title').toLowerCase();
+            if (title.includes(input)) {
+                items[i].style.display = "grid";
+                hasResults = true;
+            } else {
+                items[i].style.display = "none";
+            }
+        }
+
+        noMatch.style.display = hasResults ? "none" : "block";
     }
 </script>
 
