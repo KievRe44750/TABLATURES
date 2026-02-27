@@ -3,59 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mes Tablatures Personnelles</title>
+    <title>Mes Tablatures | Portfolio</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; color: #333; padding: 20px; }
-        .container { max-width: 800px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        h1 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+        :root {
+            --primary-color: #3498db;
+            --star-color: #f1c40f;
+            --bg-color: #f8f9fa;
+        }
+
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg-color); padding: 20px; color: #333; }
+        .container { max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
         
-        .file-list { list-style: none; padding: 0; margin-top: 20px; }
-        .file-item { 
-            display: flex; 
-            justify-content: space-between; 
+        h1 { border-bottom: 3px solid var(--primary-color); padding-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        
+        .tab-list { margin-top: 30px; }
+        
+        /* Style des lignes de tablatures */
+        .tab-item { 
+            display: grid;
+            grid-template-columns: 1fr auto auto;
             align-items: center;
-            padding: 15px;
-            margin-bottom: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
             border: 1px solid #eee;
-            border-radius: 8px;
-            transition: background 0.3s, transform 0.2s;
-            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.3s ease;
             text-decoration: none;
             color: inherit;
         }
-        
-        /* Effet visuel lors du survol (similaire à vos formulaires d'audit) */
-        .file-item:hover { 
-            background-color: #e3f2fd; 
-            transform: translateX(5px);
-            border-color: #3498db;
+
+        .tab-item:hover { 
+            background-color: #e3f2fd; /* Bleu clair au survol comme vos formulaires */
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
         }
 
-        .file-info { display: flex; align-items: center; }
-        .pdf-icon { font-size: 24px; margin-right: 15px; color: #e74c3c; }
-        .btn-open { background: #3498db; color: white; padding: 8px 15px; border-radius: 5px; font-size: 0.9em; }
+        .info h3 { margin: 0; color: #2c3e50; }
+        .info span { font-size: 0.85em; color: #7f8c8d; }
+
+        /* Système de notation étoilé */
+        .rating {
+            margin-right: 20px;
+            display: flex;
+            flex-direction: row-reverse; /* Pour la logique de sélection inverse en CSS */
+            gap: 2px;
+        }
+
+        .star {
+            font-size: 1.5em;
+            color: #ddd;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        /* Effet au survol et sélection */
+        .star:hover, .star:hover ~ .star { color: var(--star-color); }
+        .active-star { color: var(--star-color) !important; }
+
+        .btn-view {
+            background: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>🎸 Mes Tablatures</h1>
-    <p>Cliquez sur un titre pour ouvrir le PDF directement dans votre navigateur.</p>
+    <h1>🎸 Ma Bibliothèque de Tablatures</h1>
+    <p>Sélectionnez un morceau pour voir le PDF et notez sa difficulté ou votre maîtrise :</p>
 
-    <div class="file-list">
-        <a href="pdfs/ma-super-tablature.pdf" target="_blank" class="file-item">
-            <div class="file-info">
-                <span class="pdf-icon">📄</span>
-                <div>
-                    <strong>Morceau : Stairway to Heaven</strong><br>
-                    <small>Ajouté le : 27/02/2026</small>
-                </div>
+    <div class="tab-list">
+        
+        <div class="tab-item">
+            <div class="info">
+                <h3>Stairway to Heaven - Led Zeppelin</h3>
+                <span>Fichier : stairway_heaven.pdf</span>
             </div>
-            <span class="btn-open">Ouvrir</span>
-        </a>
+            
+            <div class="rating" data-id="tab1">
+                <span class="star" onclick="setRating(this, 5)">★</span>
+                <span class="star" onclick="setRating(this, 4)">★</span>
+                <span class="star" onclick="setRating(this, 3)">★</span>
+                <span class="star" onclick="setRating(this, 2)">★</span>
+                <span class="star" onclick="setRating(this, 1)">★</span>
+            </div>
 
+            <a href="pdfs/stairway_heaven.pdf" target="_blank" class="btn-view">Ouvrir PDF</a>
         </div>
+
+        <div class="tab-item">
+            <div class="info">
+                <h3>Nothing Else Matters - Metallica</h3>
+                <span>Fichier : metallica_nothing.pdf</span>
+            </div>
+            
+            <div class="rating" data-id="tab2">
+                <span class="star" onclick="setRating(this, 5)">★</span>
+                <span class="star" onclick="setRating(this, 4)">★</span>
+                <span class="star" onclick="setRating(this, 3)">★</span>
+                <span class="star" onclick="setRating(this, 2)">★</span>
+                <span class="star" onclick="setRating(this, 1)">★</span>
+            </div>
+
+            <a href="pdfs/metallica_nothing.pdf" target="_blank" class="btn-view">Ouvrir PDF</a>
+        </div>
+
+    </div>
 </div>
+
+<script>
+    function setRating(element, rating) {
+        const parent = element.parentElement;
+        const stars = parent.querySelectorAll('.star');
+        
+        // On retire la classe active de toutes les étoiles du bloc
+        stars.forEach(s => s.classList.remove('active-star'));
+        
+        // On ajoute la classe active à l'étoile cliquée et à toutes celles qui précèdent (visuellement à gauche)
+        // Note : comme on utilise flex-direction: row-reverse, la logique est inversée
+        const starsArray = Array.from(stars).reverse();
+        for(let i=0; i < rating; i++) {
+            starsArray[i].classList.add('active-star');
+        }
+        
+        console.log("Note enregistrée pour " + parent.dataset.id + " : " + rating + "/5");
+    }
+</script>
 
 </body>
 </html>
