@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
+<head>pdf.min.js
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mes Tabs | Mode Pupitre</title>
@@ -82,7 +82,7 @@
         <button class="btn-control" onclick="adjustScroll(1)">Vitesse +</button>
         <button class="close-pupitre" onclick="closePupitre()">Quitter</button>
     </div>
-    <iframe id="pdfFrame"></iframe>
+    <div id="pdfFrame" style="overflow-y: auto; flex-grow: 1; background: #333;"></div>
 </div>
 
 <script>
@@ -184,3 +184,4 @@
 </script>
 </body>
 </html>
+
