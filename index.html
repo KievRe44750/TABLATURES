@@ -3,159 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mes Tablatures | Recherche & Notes</title>
+    <title>Mes Tablatures Automatiques</title>
     <style>
-        :root {
-            --primary-color: #3498db;
-            --star-color: #f1c40f;
-            --bg-color: #f4f7f6;
-            --success-green: #2ecc71;
-        }
-
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); padding: 20px; color: #333; }
+        :root { --primary: #3498db; --star: #f1c40f; --bg: #f4f7f6; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); padding: 20px; }
         .container { max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { border-bottom: 3px solid var(--primary); padding-bottom: 10px; }
+        .search-container { margin: 20px 0; }
+        #searchBar { width: 100%; padding: 12px; border-radius: 25px; border: 1px solid #ddd; outline: none; }
         
-        header { border-bottom: 3px solid var(--primary-color); margin-bottom: 25px; padding-bottom: 10px; }
-        h1 { margin: 0; display: flex; align-items: center; gap: 10px; }
-
-        /* Style de la barre de recherche */
-        .search-container { margin-bottom: 30px; position: relative; }
-        #searchBar {
-            width: 100%;
-            padding: 15px 20px;
-            font-size: 1.1em;
-            border: 2px solid #eee;
-            border-radius: 30px;
-            outline: none;
-            transition: border-color 0.3s;
-            box-sizing: border-box;
-        }
-        #searchBar:focus { border-color: var(--primary-color); }
-
-        .tab-list { display: flex; flex-direction: column; gap: 15px; }
-        
-        /* Style des items (inspiré de vos formulaires d'audit) */
+        /* Style des items générés */
         .tab-item { 
-            display: grid;
-            grid-template-columns: 1fr auto auto;
-            align-items: center;
-            padding: 18px;
-            border: 1px solid #eee;
-            border-radius: 12px;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            color: inherit;
+            display: grid; grid-template-columns: 1fr auto auto; align-items: center;
+            padding: 15px; border: 1px solid #eee; border-radius: 10px; margin-bottom: 10px;
         }
-
-        .tab-item:hover { 
-            background-color: #eef7fe; 
-            border-color: var(--primary-color);
-            transform: translateX(8px);
-        }
-
-        .info h3 { margin: 0; color: #2c3e50; font-size: 1.2em; }
-        .info span { font-size: 0.9em; color: #7f8c8d; }
-
-        /* Notation étoilée */
-        .rating { margin-right: 25px; display: flex; flex-direction: row-reverse; }
-        .star { font-size: 1.6em; color: #ddd; cursor: pointer; transition: color 0.2s; }
-        .star:hover, .star:hover ~ .star { color: var(--star-color); }
-        .active-star { color: var(--star-color) !important; }
-
-        .btn-view {
-            background: var(--primary-color);
-            color: white;
-            padding: 10px 18px;
-            border-radius: 8px;
-            font-weight: bold;
-            text-decoration: none;
-            text-align: center;
-            min-width: 100px;
-        }
-        .btn-view:hover { background: #2980b9; }
-
-        /* Message si rien n'est trouvé */
-        #noMatch { display: none; text-align: center; padding: 20px; color: #999; }
+        .info h3 { margin: 0; font-size: 1.1em; color: #2c3e50; }
+        .rating { margin-right: 20px; display: flex; flex-direction: row-reverse; }
+        .star { font-size: 1.4em; color: #ddd; cursor: pointer; }
+        .star:hover, .star:hover ~ .star, .active-star { color: var(--star); }
+        .btn-view { background: var(--primary); color: white; padding: 8px 15px; border-radius: 5px; text-decoration: none; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <header>
-        <h1>🎸 Mes Tablatures Perso</h1>
-    </header>
-
+    <h1>🎸 Mes Tablatures (Auto)</h1>
+    
     <div class="search-container">
-        <input type="text" id="searchBar" placeholder="Rechercher un artiste ou un morceau..." onkeyup="filterTabs()">
+        <input type="text" id="searchBar" placeholder="Rechercher un fichier..." onkeyup="filterTabs()">
     </div>
 
-    <div id="noMatch">Aucun résultat trouvé pour cette recherche.</div>
-
-    <div class="tab-list" id="tabList">
-        
-        <div class="tab-item" data-title="Stairway to Heaven Led Zeppelin">
-            <div class="info">
-                <h3>Stairway to Heaven</h3>
-                <span>Led Zeppelin</span>
-            </div>
-            <div class="rating">
-                <span class="star" onclick="setRating(this, 5)">★</span>
-                <span class="star" onclick="setRating(this, 4)">★</span>
-                <span class="star" onclick="setRating(this, 3)">★</span>
-                <span class="star" onclick="setRating(this, 2)">★</span>
-                <span class="star" onclick="setRating(this, 1)">★</span>
-            </div>
-            <a href="pdfs/stairway_heaven.pdf" target="_blank" class="btn-view">Voir PDF</a>
-        </div>
-
-        <div class="tab-item" data-title="Nothing Else Matters Metallica">
-            <div class="info">
-                <h3>Nothing Else Matters</h3>
-                <span>Metallica</span>
-            </div>
-            <div class="rating">
-                <span class="star" onclick="setRating(this, 5)">★</span>
-                <span class="star" onclick="setRating(this, 4)">★</span>
-                <span class="star" onclick="setRating(this, 3)">★</span>
-                <span class="star" onclick="setRating(this, 2)">★</span>
-                <span class="star" onclick="setRating(this, 1)">★</span>
-            </div>
-            <a href="pdfs/metallica_nothing.pdf" target="_blank" class="btn-view">Voir PDF</a>
-        </div>
-
-    </div>
+    <div id="tabList">Chargement des tablatures...</div>
 </div>
 
 <script>
-    // Fonction pour la notation étoilée
-    function setRating(element, rating) {
-        const parent = element.parentElement;
-        const stars = Array.from(parent.querySelectorAll('.star')).reverse();
-        stars.forEach(s => s.classList.remove('active-star'));
-        for(let i=0; i < rating; i++) {
-            stars[i].classList.add('active-star');
+    // --- CONFIGURATION À MODIFIER ---
+    const repoOwner = 'KievRE44750'; // Remplacez par votre pseudo
+    const repoName = 'TABLATURES';    // Remplacez par le nom du dépôt
+    const folderPath = 'pdfs';               // Le nom du dossier contenant les PDF
+    // --------------------------------
+
+    async function loadFiles() {
+        const url = `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${folderPath}`;
+        
+        try {
+            const response = await fetch(url);
+            const files = await response.json();
+            const tabList = document.getElementById('tabList');
+            tabList.innerHTML = ''; // On vide le message de chargement
+
+            files.forEach(file => {
+                if (file.name.endsWith('.pdf')) {
+                    // On nettoie le nom du fichier pour l'affichage (enlève .pdf et remplace les tirets)
+                    const displayName = file.name.replace('.pdf', '').replace(/-/g, ' ').replace(/_/g, ' ');
+                    
+                    const item = document.createElement('div');
+                    item.className = 'tab-item';
+                    item.setAttribute('data-title', displayName.toLowerCase());
+                    
+                    item.innerHTML = `
+                        <div class="info">
+                            <h3>${displayName}</h3>
+                            <span>Fichier: ${file.name}</span>
+                        </div>
+                        <div class="rating">
+                            <span class="star" onclick="setRating(this, 5)">★</span>
+                            <span class="star" onclick="setRating(this, 4)">★</span>
+                            <span class="star" onclick="setRating(this, 3)">★</span>
+                            <span class="star" onclick="setRating(this, 2)">★</span>
+                            <span class="star" onclick="setRating(this, 1)">★</span>
+                        </div>
+                        <a href="${file.download_url}" target="_blank" class="btn-view">Ouvrir</a>
+                    `;
+                    tabList.appendChild(item);
+                }
+            });
+        } catch (error) {
+            console.error("Erreur lors de la récupération des fichiers:", error);
+            document.getElementById('tabList').innerHTML = "Erreur de chargement. Vérifiez la configuration.";
         }
     }
 
-    // Fonction de filtrage pour la recherche
+    function setRating(element, rating) {
+        const stars = Array.from(element.parentElement.querySelectorAll('.star')).reverse();
+        stars.forEach(s => s.classList.remove('active-star'));
+        for(let i=0; i < rating; i++) stars[i].classList.add('active-star');
+    }
+
     function filterTabs() {
         const input = document.getElementById('searchBar').value.toLowerCase();
         const items = document.getElementsByClassName('tab-item');
-        const noMatch = document.getElementById('noMatch');
-        let hasResults = false;
-
-        for (let i = 0; i < items.length; i++) {
-            const title = items[i].getAttribute('data-title').toLowerCase();
-            if (title.includes(input)) {
-                items[i].style.display = "grid";
-                hasResults = true;
-            } else {
-                items[i].style.display = "none";
-            }
+        for (let item of items) {
+            item.style.display = item.getAttribute('data-title').includes(input) ? "grid" : "none";
         }
-
-        noMatch.style.display = hasResults ? "none" : "block";
     }
+
+    // Lancer le chargement au démarrage
+    loadFiles();
 </script>
 
 </body>
