@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mes Tablatures | Pro</title>
+    <title>Mes Tablatures | Pro Mobile</title>
     <style>
         :root {
             --primary-color: #3498db;
@@ -13,43 +13,124 @@
             --new-color: #e67e22;
         }
 
-        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg-color); padding: 20px; color: #333; }
-        .container { max-width: 900px; margin: auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        
-        header { border-bottom: 3px solid var(--primary-color); margin-bottom: 25px; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: flex-end; }
-        h1 { margin: 0; font-size: 1.8em; color: var(--text-dark); }
-        #fileCount { font-weight: bold; color: var(--primary-color); font-size: 0.9em; }
+        /* Reset & Base */
+        body { 
+            font-family: 'Segoe UI', system-ui, sans-serif; 
+            background-color: var(--bg-color); 
+            padding: 10px; /* Moins de padding sur mobile */
+            margin: 0;
+            color: #333; 
+        }
 
-        .search-container { margin-bottom: 30px; }
-        #searchBar { width: 100%; padding: 15px 20px; font-size: 1.1em; border: 2px solid #eee; border-radius: 30px; outline: none; box-sizing: border-box; }
+        .container { 
+            max-width: 600px; 
+            margin: auto; 
+            background: white; 
+            padding: 15px; 
+            border-radius: 15px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+        }
+
+        header { 
+            border-bottom: 3px solid var(--primary-color); 
+            margin-bottom: 20px; 
+            padding-bottom: 10px; 
+            display: flex; 
+            flex-direction: column; /* Titre et compteur l'un sur l'autre sur mobile */
+            align-items: flex-start;
+        }
+
+        h1 { margin: 0; font-size: 1.5em; color: var(--text-dark); }
+        #fileCount { font-weight: bold; color: var(--primary-color); font-size: 0.85em; margin-top: 5px; }
+
+        .search-container { margin-bottom: 20px; }
+        #searchBar { 
+            width: 100%; 
+            padding: 12px 20px; 
+            font-size: 16px; /* 16px minimum pour éviter le zoom auto sur iPhone */
+            border: 2px solid #eee; 
+            border-radius: 30px; 
+            outline: none; 
+            box-sizing: border-box; 
+        }
+
+        /* LISTE : Passage en Flexbox verticale pour le mobile */
+        #tabList { display: flex; flex-direction: column; gap: 12px; }
 
         .tab-item { 
-            display: grid; grid-template-columns: 1fr auto auto; align-items: center;
-            padding: 18px; border: 1px solid #eee; border-radius: 12px; margin-bottom: 15px; background: #fff; transition: 0.3s;
+            display: flex;
+            flex-direction: column; /* Empilement vertical des éléments */
+            gap: 12px;
+            padding: 15px; 
+            border: 1px solid #eee; 
+            border-radius: 12px; 
+            background: #fff; 
+            transition: 0.2s;
         }
-        .tab-item:hover { background-color: #eef7fe; border-color: var(--primary-color); transform: translateX(8px); }
 
-        .info h3 { margin: 0; color: var(--text-dark); font-size: 1.2em; text-transform: capitalize; display: flex; align-items: center; gap: 10px; }
-        .badge-new { background: var(--new-color); color: white; font-size: 0.6em; padding: 3px 8px; border-radius: 5px; text-transform: uppercase; }
+        .tab-item:active { background-color: #eef7fe; transform: scale(0.98); }
 
-        .rating { margin-right: 25px; display: flex; flex-direction: row-reverse; }
-        .star { font-size: 1.6em; color: #ddd; cursor: pointer; }
-        .star:hover, .star:hover ~ .star, .active-star { color: var(--star-color); }
+        .info h3 { 
+            margin: 0; 
+            color: var(--text-dark); 
+            font-size: 1.1em; 
+            text-transform: capitalize; 
+            display: flex; 
+            flex-wrap: wrap; 
+            align-items: center; 
+            gap: 8px; 
+        }
 
-        .btn-view { background: var(--primary-color); color: white; padding: 10px 20px; border-radius: 8px; font-weight: bold; text-decoration: none; }
-        
-        #noMatch { display: none; text-align: center; color: #999; }
-        .loader { text-align: center; color: var(--primary-color); }
+        .info span { font-size: 0.8em; color: #7f8c8d; display: block; margin-top: 4px; }
+
+        .badge-new { 
+            background: var(--new-color); 
+            color: white; 
+            font-size: 0.7em; 
+            padding: 2px 8px; 
+            border-radius: 4px; 
+            text-transform: uppercase; 
+        }
+
+        /* Barre d'action : Note à gauche, bouton à droite */
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #f9f9f9;
+            padding-top: 10px;
+        }
+
+        .rating { display: flex; flex-direction: row-reverse; gap: 2px; }
+        .star { 
+            font-size: 1.8em; /* Plus gros pour faciliter le clic au doigt */
+            color: #ddd; 
+            cursor: pointer; 
+            padding: 0 2px;
+        }
+        .active-star { color: var(--star-color) !important; }
+
+        .btn-view { 
+            background: var(--primary-color); 
+            color: white; 
+            padding: 10px 18px; 
+            border-radius: 8px; 
+            font-weight: bold; 
+            text-decoration: none; 
+            font-size: 0.9em;
+            text-align: center;
+        }
+
+        #noMatch { display: none; text-align: center; color: #999; padding: 20px; }
+        .loader { text-align: center; color: var(--primary-color); padding: 20px; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <header>
-        <div>
-            <h1>🎸 Mes Tablatures</h1>
-            <div id="fileCount">Chargement du compteur...</div>
-        </div>
+        <h1>🎸 Mes Tablatures</h1>
+        <div id="fileCount">Chargement...</div>
     </header>
 
     <div class="search-container">
@@ -77,48 +158,45 @@
             tabList.innerHTML = '';
             tabList.classList.remove('loader');
 
-            if (!Array.isArray(files)) return;
+            if (!Array.isArray(files)) {
+                tabList.innerHTML = "Erreur : dossier introuvable.";
+                return;
+            }
 
-            // Option 5 : Mise à jour du compteur
             const pdfFiles = files.filter(f => f.name.toLowerCase().endsWith('.pdf'));
             document.getElementById('fileCount').innerText = `${pdfFiles.length} morceaux disponibles`;
 
-            // On trie les fichiers (les plus récents en premier si possible, ou par nom)
             pdfFiles.forEach(file => {
                 const displayName = file.name.replace('.pdf', '').replace(/-/g, ' ').replace(/_/g, ' ');
-                
-                // Option 6 : Détection de nouveauté (Simulée ici, car l'API content ne donne pas la date exacte sans appel extra)
-                // Pour l'exemple, on peut considérer un fichier "nouveau" s'il contient "NEW" dans le nom ou via un tag
-                const isNew = false; // On pourrait l'automatiser avec un autre appel API si besoin
+                const isNew = file.name.toUpperCase().includes('NEW');
+                const savedRating = localStorage.getItem('rating-' + file.sha) || 0;
 
                 const item = document.createElement('div');
                 item.className = 'tab-item';
                 item.setAttribute('data-title', displayName.toLowerCase());
                 
-                // Option 7 : Récupération de la note sauvegardée
-                const savedRating = localStorage.getItem('rating-' + file.sha) || 0;
-
                 item.innerHTML = `
                     <div class="info">
-                        <h3>${displayName} ${isNew ? '<span class="badge-new">Nouveau</span>' : ''}</h3>
-                        <span>Fichier : ${file.name}</span>
+                        <h3>${displayName} ${isNew ? '<span class="badge-new">New</span>' : ''}</h3>
+                        <span>${file.name}</span>
                     </div>
-                    <div class="rating" data-sha="${file.sha}">
-                        ${[5,4,3,2,1].map(num => `
-                            <span class="star ${num <= savedRating ? 'active-star' : ''}" 
-                                  onclick="setRating(this, ${num})">★</span>
-                        `).join('')}
+                    <div class="actions">
+                        <div class="rating" data-sha="${file.sha}">
+                            ${[5,4,3,2,1].map(num => `
+                                <span class="star ${num <= savedRating ? 'active-star' : ''}" 
+                                      onclick="setRating(this, ${num})">★</span>
+                            `).join('')}
+                        </div>
+                        <a href="https://${repoOwner}.github.io/${repoName}/${file.path}" target="_blank" class="btn-view">Ouvrir</a>
                     </div>
-                    <a href="https://${repoOwner}.github.io/${repoName}/${file.path}" target="_blank" class="btn-view">Ouvrir</a>
                 `;
                 tabList.appendChild(item);
             });
         } catch (error) {
-            document.getElementById('tabList').innerHTML = "Erreur GitHub.";
+            document.getElementById('tabList').innerHTML = "Erreur de connexion.";
         }
     }
 
-    // Option 7 : Sauvegarde locale de la note
     function setRating(element, rating) {
         const parent = element.parentElement;
         const sha = parent.dataset.sha;
@@ -136,7 +214,7 @@
         let hasResults = false;
         for (let item of items) {
             const show = item.getAttribute('data-title').includes(input);
-            item.style.display = show ? "grid" : "none";
+            item.style.display = show ? "flex" : "none";
             if(show) hasResults = true;
         }
         document.getElementById('noMatch').style.display = hasResults ? "none" : "block";
